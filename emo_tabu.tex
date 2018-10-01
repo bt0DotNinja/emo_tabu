@@ -3,16 +3,68 @@
 
 %opening
 \title{Using a parallel tabu search to approximate uniform design}
-\author{}
+\author{Alberto Rodr\'iguez S\'anchez\inst{1}\and
+Antonin Ponsich\inst{1} \and
+Antonio L\'opez Jaimes\inst{2} \and
+Sa\'ul Zapotecas Mart\'inez\inst{2}
+}
+
+\authorrunning{Rodr\'iguez S.  et al.}
+
+\institute{Dpto. de Sistemas, Universidad Aut\'onoma Metropolitana Azcapotzalco
+\email{\{ars,aspo\}@correo.azc.uam.mx}\\
+\and
+Dpto. de Matem\'aticas Aplicadas y Sistemas, Universidad Aut\'onoma Metropolitana Cuajimalpa\\
+\email{alopez@correo.cua.uam.mx, saul.zapotecas@gmail.com}}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
+In Multi-objective Optimization (MO), diversity assessment is one of the most important concern in order to produce an approximated set of solutions evenly distributed over 
+the Pareto front. To deal with this issue, recent algorithms such as MOEA/D\cite{4358754} make use of a uniformly scattered set of reference points/vectors that indicates 
+search directions in the objective space. 
+This issue becomes critical in Many-objective Optimization, promoting the development of many generation techniques having a rich underlying theory mainly arising from chemistry and statistics areas.
 
+Among these methods, the Uniform Design (UD) is based on the minimization of a discrepancy metric, which measures how well equidistributed the points are in a sample space. %, when the set of points is perfectly equidistributed in the sample space a discrepancy metric is equal to 0. %   QUÉ REPRESENTA LA MÉTRICA DE DISCREPANCIA.
+Of particular interest in this work is the centered $L_2$ discrepancy metric proposed in \cite{fang2002centered}.
+An exponentially increasing number of candidate sets can be generated using the Good Lattice Point (GLP) technique, which involves a huge computational 
+cost (memory and time). It was demonstrated that the problem of finding a uniform design under a given discrepancy metric is NP-hard when the number of runs, $n \rightarrow \infty$ and the number of factors, $s > 1$.
+
+In order to solve this optimization problem, a parallel Tabu Search (TS) is implemented in this work. A specific feature is the tabu list that only reports
+``generator parameters'', which are the input needed by the GLP algorithm to generate the set of final 
+reference points.
+The best reference sets founded by TS were subsequently used to solve two classical MO problems with MOEA/D (using the Tchebycheff scalarizing function).
+The results are compared with those of the Simplex Lattice Design (SLD) in terms of the Hypervolume (HV) and $\Delta$-diversity indicators.
+Results highlight that the UD allows a significant improvement, particularly regarding diversity and when the number of objectives increases.
 \end{abstract}
 
-\section{}
+\section{Introduction}
+
+\section{Overview on weight vector design for reference-based MOEAs}
+\subsection{Based on mixture designs}
+\subsection{Based on discrepancy functions}
+
+\section{DU : problem statement }
+\subsection{Good lattice point}
+\subsection{Discrepancy functions}
+\subsection{$CD_2$ function and optimization problem for UD}
+
+\section{Solution technique : parallel Tabu Search}
+\subsection{Decision variables and codification}
+\subsection{Neighborhood and Tabu list}
+\subsection{Specific features}
+
+
+\section{Computational experiments and discussion}
+\subsection{Uniform designs obtained}
+\subsection{Testing on classical MO instances}
+
+\section{Conclusions}
+
+
+\bibliographystyle{splncs04}
+\bibliography{bibliografia}
 
 \end{document}
