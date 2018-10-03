@@ -1,5 +1,10 @@
 \documentclass[a4paper,10pt]{llncs}
 \usepackage[utf8]{inputenc}
+%\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[ruled,vlined,lined,linesnumbered,algosection,spanish]{algorithm2e}
+%\theoremstyle{definition}
+
 
 %opening
 \title{Using a parallel tabu search to approximate uniform design}
@@ -43,23 +48,137 @@ Results highlight that the UD allows a significant improvement, particularly reg
 \section{Introduction}
 
 \section{Overview on weight vector design for reference-based MOEAs}
-\subsection{Based on mixture designs}
-\subsection{Based on discrepancy functions}
 
-\section{DU : problem statement }
+\subsection{Mixture design}
+
+Experiments with mixtures are experiments in which the variants are proportions of ingredients in a mixture. An example is an experiment for determining the proportion of ingredients in a polymer mixture that will produce plastics products with the
+highest tensile strength. Similar experiments are very commonly encountered in industries. Designs for deciding how to mix the ingredients are called experimental designs with mixtures.
+
+A design of $N$ runs for mixtures of $m$ ingredients is a set of $N$ points in the domain:
+
+\begin{equation}
+T_m = \{ ( \lambda_1, \dots, \lambda_m ):\lambda_j \geq 0, j=1, \dots,m, \lambda_1 + \dots + lambda_m  = 1 \}
+\end{equation}
+
+The original MOEA/D\cite{4358754} just adopts the simplex-lattice design to set the aggregation coefficient vectors. There are at least two problems can be found with that design:
+\begin{itemize}
+ \item The experimental points are not very uniformly distributed on the experimental domain $T_m$.
+ \item There are too many experimental points at the boundary of the experimental domain, i.e, the unitary simplex.
+\end{itemize}
+
+\subsection{Based on mixture designs}
+
+a lot of work which appeared in the statistical literature proposed many kinds of designs. Scheff\'e introduced the simplex-lattice designs and the corresponding
+polynomial models (cita de Scheff\'e simplex lattice,). Later he introduced an alternative design, the simplex-centroid design ( citar Experiments with mixtures), to the general simplex-lattice. Cornell gave a suggestion of axial design and
+he gave a comprehensive review of nearly all the statistical articles on designs of experiments with mixtures and data analysis (buscar cita en Experiments with mixtures, designs, models, and the analysis of
+mixture data).
+
+\subsubsection{Simplex Lattice}
+
+% TODO metodo de generacion y propieades
+
+% Referencia: Experiments with mixtures, Scheffe 
+% Referencia: Normal-Boundary Intersection: A New Method for Generating the Pareto Surface in Nonlinear Multicriteria (Das&Dennis)
+
+\subsubsection{Two layer simplex Lattice}
+
+% TODO (cita de Deb) 
+
+\subsubsection{Simplex-centroid design}
+
+% TODO metodo de generacion y propieades
+
+\subsubsection{Axial design}
+
+% TODO metodo de generacion y propieades
+
+\subsection{Based on discrepancy functions} % Preguntar si es requerido, 
+
+% referencias del Paper de Saul
+
+% TODO Teorema de proyeccion en el simplejo
+
+
+\section{UD : problem statement } % Discutir
+
+
+
 \subsection{Good lattice point}
 \subsection{Discrepancy functions}
 \subsection{$CD_2$ function and optimization problem for UD}
 
+% TODO Definicion en  FANG. Uniform designs and their application in industry
+
+% TODO SPLIT equation
+
+\begin{equation}
+\mathop{\mathrm{argmin}} CD_2 = \left(\frac{13}{12}\right)^m - \left(\frac{2}{N}\right) \sum_{k=1}^N \prod_{i=1}^m \left(1+\frac{1}{2} |X_{ki}-\frac{1}{2}| - \frac{1}{2} |X_{ki}-\frac{1}{2}|^2  \right) + \left(\frac{1}{N^2}\right) \sum_{k=1}^N \sum_{j=1}^N \prod_{i=1}^m \left(1+\frac{1}{2} |X_{ki}-\frac{1}{2}| + \frac{1}{2} |X_{ji}-\frac{1}{2}| - \frac{1}{2} |X_{ki}-X_{ji}| \right) 
+\end{equation}
+
+
+ where:
+ \begin{itemize}
+  \item $X$ is the induced Matrix of a U-type design.
+  \item $N$ Rows of $X$.
+  \item $m$ Columns of $X$.
+ \end{itemize}
+
 \section{Solution technique : parallel Tabu Search}
+
+\begin{algorithm}[H]
+     \caption{Parallel Tabu Search}
+    %\SetLine
+     \KwData{$IterMax$: Stop Condition, $W$: workers, $T_{max}$: Tabu List size, $N$: Number of points wanted, $dim$: number of dimensions}
+     \KwResult{$NUD$:Nearly Uniform Design}
+     
+ bag $\leftarrow$ SearchCoprime($N$)\;
+ Solutions $\leftarrow$ RandomDisjoint(bag,$dim$,$W$)\;
+ bestdis  $\leftarrow \infty$, bestsol  $\leftarrow \emptyset$, TabuList $\leftarrow \emptyset$ \;
+ 
+ \While {$\neg$Stopping($IterMax$)}{
+	\tcc{Parallel For}
+	\For {$i:=1$ a $W$}{
+	$U_i$ $\leftarrow$ GLP($Solutions_i$) \;
+	$X_i$ $\leftarrow$ InducedMatrix($U_i$) \;
+	$discrepancy_i$ $\leftarrow$ $CD_2(X_i)$ \;
+        \If {$discrepancy_i < bestdis_i$ and $Solutions_i$ $\not\in$ TabuList}{
+		      $bestsol_i$ $\leftarrow$ $Solutions_i$\;
+		      $bestdis_i$ $\leftarrow$ $discrepancy_i$\;
+		      TabuList $\leftarrow$ TabuList $\cup$ $Solutions_i$\;
+		      }
+	\tcc{Critical Zone}
+	$Solutions_i$ $\leftarrow$ UpdateSol($Solutions_i$,bag)\;
+ 	\If {$|TabuList|$ $>$ $T_{max}$}{
+ 	  TabuList $\leftarrow$ MaintainTabuList(TabuList) \;
+ 	}
+ }
+ 
+ $NUD$ $\leftarrow$ $\min(Solutions, bestdis)$ \; 
+ }
+ \Return($NUD$)
+\end{algorithm}
+
 \subsection{Decision variables and codification}
+
+% TODO Beto
+
 \subsection{Neighborhood and Tabu list}
+
+% TODO Beto
+
 \subsection{Specific features}
 
+% TODO Beto
 
 \section{Computational experiments and discussion}
+
 \subsection{Uniform designs obtained}
+
+% TODO Definir instancias e indicadores
+
 \subsection{Testing on classical MO instances}
+
+% TODO Definir instancias
 
 \section{Conclusions}
 
