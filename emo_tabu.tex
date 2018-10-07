@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 %\usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{amssymb}
 \usepackage[ruled,vlined,lined,linesnumbered,algosection,spanish]{algorithm2e}
 %\theoremstyle{definition}
 
@@ -35,8 +36,7 @@ This issue becomes critical in Many-objective Optimization, promoting the develo
 Among these methods, the Uniform Design (UD) is based on the minimization of a discrepancy metric, which measures how well equidistributed the points are in a sample space. %, when the set of points is perfectly equidistributed in the sample space a discrepancy metric is equal to 0. %   QUÉ REPRESENTA LA MÉTRICA DE DISCREPANCIA.
 Of particular interest in this work is the centered $L_2$ discrepancy metric proposed in \cite{fang2002centered}.
 An exponentially increasing number of candidate sets can be generated using the Good Lattice Point (GLP) technique, which involves a huge computational 
-cost (memory and time). It was demonstrated that the problem of finding a uniform design under a given discrepancy metric is NP-hard when the number of runs, $n \rightarrow \infty$ and the number of factors, $s > 1$.
-
+cost (memory and time). 
 In order to solve this optimization problem, a parallel Tabu Search (TS) is implemented in this work. A specific feature is the tabu list that only reports
 ``generator parameters'', which are the input needed by the GLP algorithm to generate the set of final 
 reference points.
@@ -54,76 +54,119 @@ Results highlight that the UD allows a significant improvement, particularly reg
 Experiments with mixtures are experiments in which the variants are proportions of ingredients in a mixture. An example is an experiment for determining the proportion of ingredients in a polymer mixture that will produce plastics products with the
 highest tensile strength. Similar experiments are very commonly encountered in industries. Designs for deciding how to mix the ingredients are called experimental designs with mixtures.
 
-A design of $N$ runs for mixtures of $m$ ingredients is a set of $N$ points in the domain:
+A design of $n$ runs for mixtures of $m$ ingredients is a set of $n$ points in the domain:
 
 \begin{equation}
-T_m = \{ ( \lambda_1, \dots, \lambda_m ):\lambda_j \geq 0, j=1, \dots,m, \lambda_1 + \dots + lambda_m  = 1 \}
+T_m = \{ ( \lambda_1, \dots, \lambda_m ):\lambda_j \geq 0, j=1, \dots,m, \lambda_1 + \dots + \lambda_m  = 1 \}
 \end{equation}
 
 The original MOEA/D\cite{4358754} just adopts the simplex-lattice design to set the aggregation coefficient vectors. There are at least two problems can be found with that design:
 \begin{itemize}
  \item The experimental points are not very uniformly distributed on the experimental domain $T_m$.
- \item There are too many experimental points at the boundary of the experimental domain, i.e, the unitary simplex.
+ \item There are too many experimental points at the boundary of the experimental domain, i.e, the unitary simplex $T_m$.
 \end{itemize}
 
 \subsection{Based on mixture designs}
 
-a lot of work which appeared in the statistical literature proposed many kinds of designs. Scheff\'e introduced the simplex-lattice designs and the corresponding
-polynomial models (cita de Scheff\'e simplex lattice,). Later he introduced an alternative design, the simplex-centroid design ( citar Experiments with mixtures), to the general simplex-lattice. Cornell gave a suggestion of axial design and
-he gave a comprehensive review of nearly all the statistical articles on designs of experiments with mixtures and data analysis (buscar cita en Experiments with mixtures, designs, models, and the analysis of
-mixture data).
+A lot of work which appeared in the statistical literature proposed many kinds of designs. Scheff\'e introduced the simplex-lattice designs and the corresponding
+polynomial models\cite{scheffe1958experiments}. Later he introduced an alternative design, the simplex-centroid design, to the general simplex-lattice. Cornell gave a suggestion of axial design and
+he gave a comprehensive review of nearly all the statistical articles on designs of experiments with mixtures and data analysis\cite{cornell2011experiments}. 
 
-\subsubsection{Simplex Lattice}
+\subsubsection{Simplex lattice design }
+The simplex lattice design is a space filling design that creates a triangular grid of runs, the simplex lattice design does not necessarily include the centroid.. Suppose that the mixture has $m$ components. Let $H$ be a positive integer and suppose that each component takes $(H+1)$ equally spaced places from 0 to 1, i.e.,
 
-% TODO metodo de generacion y propieades
+\begin{equation}
+ \lambda_i=\{0,\frac{1}{H},\frac{2}{H},\dots,\frac{H-1}{H},1\}\quad  i =1,2,\dots,m.
+\end{equation}
 
-% Referencia: Experiments with mixtures, Scheffe 
-% Referencia: Normal-Boundary Intersection: A New Method for Generating the Pareto Surface in Nonlinear Multicriteria (Das&Dennis)
+This design can be efficiently computed using Das and Dennis’s systematic approach\cite{Das:1998:NIN:588907.589322} and is widely used in many MOEAs.
 
-\subsubsection{Two layer simplex Lattice}
+\subsubsection{Two layer simplex Lattice design}
 
-% TODO (cita de Deb) 
+Since the simplex lattice design generates many points in the boundary of the simplex when the number of points $H$ or the number of dimensions $m$ increases. To avoid this problem, the use union of two small simplex lattices when one conserve the original shape (external layer) end the other was escalated in $ 0 < f < 1$ factor to cover the central region of the simplex. Kalimoy Deb introduces it use in NSGA-II\cite{6600851} to deal with many objective problems.
 
 \subsubsection{Simplex-centroid design}
 
-% TODO metodo de generacion y propieades
+In an $m$-component simplex-centroid design, the design points from $m$ pure blends, $C^2_m$ binary mixtures, $C^3_m$ ternary mixtures and so on, with the finally overall centroid point $(\frac{1}{m} ,\dots ,\frac{1}{m})$ the $m$-nary mixture. So the total number of design points is
+$2^m-1$.
 
 \subsubsection{Axial design}
 
-% TODO metodo de generacion y propieades
+The line segment joining a vertex of the simplex $T_m$ with its centroid is called an axis. Let $d$ be a positive number such that $0 < d < \frac{m-1}{m}$. The experimental points of the axial design are $m$ points on $m$ axes such that each point to the centroid has the same distance $d$.
+
 
 \subsection{Based on discrepancy functions} % Preguntar si es requerido, 
 
-% referencias del Paper de Saul
+Discrepancy theory (also called theory of distribution irregularities) is a branch of mathematics which deals with the problem of distributing points uniformly over some geometric object and evaluating the inevitably arising errors. This theory was ignited by theoretical contributions such as Weyl's equidistribution theorem and Roth's theorem \cite{roth1955rational}. The discrepancy of a point set, measures the nonuniformity of such points placed (without loss of generality) in a unit cube $[0,1]^m$, where $m > 0$ denotes the dimension of the unit cube.
 
-% TODO Teorema de proyeccion en el simplejo
+The low-discrepancy sequences are also called quasi-random or sub-random sequences, due to their common use as a replacement of uniformly distributed random numbers. The "quasi" modifier is used to denote more clearly that the values of a low-discrepancy sequence are neither random nor pseudorandom, but such sequences share some properties of random variables and in certain applications such as the quasi-Monte Carlo method their lower discrepancy is an important advantage. Zapotecas et al. introduces the use of low-discrepancy sequences as weight vectors in MOEA/D Framework\cite{zapotecas2015low}.
 
+As well another generative techniques like good lattice point and uniform design generates a good point set with low discrepancy. Hua \& Wang showed that uniform designs generated by the good lattice point method tend to have low discrepancy \cite{hua2012applications}. Unless both are space filling methods, the uniform design can be expresed as an optimization problem. Tan et al. introduces the use of uniform design as weight vectors in MOEA/D with promising results but restricting their use to $2 \leq m \leq 4$ mostly by the complexy to calculate uniform design for larger runs and dimensions \cite{tan2013moea}.    
 
-\section{UD : problem statement } % Discutir
+\section{Uniform Design: problem statement } % Discutir
 
+Fang et al proposes the uniform design (UD) is a kind of statistical experimental design\cite{fang1980uniform}. The UD designs the experimental points to be uniformly scattered over a experimental domain in the sense of low discrepancy\cite{fang1994some}. The UD is robust against changes of the model\cite{xie2000admissibility}.  
 
+Suppose there are $m$ factors (or objectives in the context of $MOP$) over the standard domain $T_m$. The goal is choose a set of $n$ points $P_n=\{\lambda^1,\dots,\lambda^n\} \subset T_M$ such that those points are uniformly scattered on $T_m$. Let $D(P_n)$ be a measure of the nonuniformity (Discrepancy) of $P_n$; we seek a set $P_n^*$ that minimizes D or, equivalently, maximizes the uniformly all possible $n$ points in $T_m$ .
 
-\subsection{Good lattice point}
-\subsection{Discrepancy functions}
-\subsection{$CD_2$ function and optimization problem for UD}
-
-% TODO Definicion en  FANG. Uniform designs and their application in industry
-
-% TODO SPLIT equation
+The associated optimization problem can be described as follows:
 
 \begin{equation}
-\mathop{\mathrm{argmin}} CD_2 = \left(\frac{13}{12}\right)^m - \left(\frac{2}{N}\right) \sum_{k=1}^N \prod_{i=1}^m \left(1+\frac{1}{2} |X_{ki}-\frac{1}{2}| - \frac{1}{2} |X_{ki}-\frac{1}{2}|^2  \right) + \left(\frac{1}{N^2}\right) \sum_{k=1}^N \sum_{j=1}^N \prod_{i=1}^m \left(1+\frac{1}{2} |X_{ki}-\frac{1}{2}| + \frac{1}{2} |X_{ji}-\frac{1}{2}| - \frac{1}{2} |X_{ki}-X_{ji}| \right) 
+ \mathop{\mathrm{argmin}} D(P_n)
+\end{equation}
+ $\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad St.$ %arreglar despues
+ \begin{equation}
+ P_n \in T_m  
+ \end{equation}
+
+The base element of UD is the U-type design. A U-type design $U_{n,q^m}$ is an $n x m$ matrix $U = (u_{ij} )$ of which each column has $q$ entries $1, \dots, q$ appearing equally often. The induced matrix of $U$ , denoted by $X = (x_{ij})$, is defined by $x_{ij} = (u_{ij} - 0.5)/q$.
+An U-type design $U_{n,m}$ becomes UD when induced matrix $X_{n,m}$ has the smallest discrepancy in the set of all the possible induced matrices in the domain $T_m$.
+
+It was demonstrated that the problem of finding a uniform design under a given discrepancy metric $D$ is NP-hard when the number of runs, $n \rightarrow \infty$ and the number of factors, $m > 1$\cite{fang2003note}.
+
+Many methods for construction of uniform designs or nearly uniform designs, such as the Good Lattice Point (GLP) method, optimization method etc. have been proposed. The GLP approach is adopted in this paper.
+
+\subsection{Good lattice point}
+
+The good lattice point method (GLP) was proposed by Korobov for numerical evaluation of multivariate integrals\cite{wang2002historical} and the point sets generated using this method are widely used in quasi-Monte Carlo methods, uniform designs and computer experiments.
+
+To generate a U-type matrix using a GLP method we first need calculate a $\mathbb{N}$ subset $H_n$ than accomplish:
+
+\begin{equation}
+ H_n =\{ h:h<n | gcd(h,n)=1\}
 \end{equation}
 
+For any $m$ distinct elements of $H_n=\{h_1 ,h_2 , \dots ,h_m\}$ , generate a $n x m$ matrix $U=(u_{ij})$ where $u_{ij}=i \cdot h_j mod n$ and the multiplication operation modulo $n$ is modified as $1 \leq u_{ij} \leq n$.
+
+To get U-type matrix we only need delete the last row of the GLP generated matrix.
+
+\subsection{Discrepancy functions}
+
+In the specialized literature here are several discrepancy measures which determine the nonuniformity of a point set. There is more than one definition of discrepancy for $D$ to measure the
+non-uniformity of $P_n$, for example, the star discrepancy, the most commonly used centered $L_2$-discrepancy (CD) and the wrap around $L_2$-discrepancy (WD). The centered $L_2$-discrepancy (CD),
+denoted by $CD_2$ is used in our experiments, for it is convenient to compute and invariant under relabeling of coordinate axes. Corresponding formulas for other discrepancies can be found in Fang et al. \cite{fang2003j}.
+
+\subsection{$CD_2$ discrepancy function and optimization problem for UD}
+
+We can define our optimization problem using the induced matrix $X$ of $U$ as follows:
+
+\begin{eqnarray}
+\mathop{\mathrm{argmin}} CD_2(X) =& \left(\frac{13}{12}\right)^m - \left(\frac{2}{n}\right) \sum_{k=1}^n \prod_{i=1}^m \left(1+\frac{1}{2} |X_{ki}-\frac{1}{2}| - \frac{1}{2} |X_{ki}-\frac{1}{2}|^2  \right)& \\
+& + \left(\frac{1}{n^2}\right) \sum_{k=1}^n \sum_{j=1}^n \prod_{i=1}^m \left(1+\frac{1}{2} |X_{ki}-\frac{1}{2}| + \frac{1}{2} |X_{ji}-\frac{1}{2}| - \frac{1}{2} |X_{ki}-X_{ji}| \right)& \nonumber 
+\end{eqnarray}
+ $\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad St.$ %arreglar despues
 
  where:
  \begin{itemize}
   \item $X$ is the induced Matrix of a U-type design.
-  \item $N$ Rows of $X$.
-  \item $m$ Columns of $X$.
+  \item $n$ rows of $X$.
+  \item $m$ columns of $X$.
  \end{itemize}
 
+The U-type design $U^*$ than indused matrix $X^*$ with the lowest discrepancy under the discrepancy mesure $CD_2$ is called uniform design.  Also a U-type desing with low discrepancy can be named nearly uniform desing\cite{ma2004new}.
+ 
 \section{Solution technique : parallel Tabu Search}
+
 
 \begin{algorithm}[H]
      \caption{Parallel Tabu Search}
