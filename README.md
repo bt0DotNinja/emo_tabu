@@ -21,7 +21,7 @@ MOEAs based on reference points for diversity assessment (MOEA/D, NSGA-III), in 
   * 4.2 Neighborhood and Tabu list
   * 4.3 Specific features ( ? )
   * 4.4 Pruebas
-  * 4.5 Nuevos Problemas Lap
+  * 4.5 Nuevos Problemas
 
 5. Computational experiments and discussion                (APROX. 4 PÁG.)
     [Presentar el ajuste de parámetros de la búsqueda tabú]
